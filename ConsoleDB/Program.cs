@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using Npgsql;
 
@@ -7,141 +8,157 @@ namespace ConsoleDB
     internal class Program
     {
         private static string Host = "localhost";
-        private static string User = "postgres";
         private static string DBname = "sklep_komputerowy";
-        private static string Password = "mateusz";
         private static string Port = "5432";
+
+        private static string prac = "SELECT * FROM pracownicy"; // 8
+        private static string zwroty = "SELECT * FROM zwroty"; // 10
+        private static string zam = "SELECT * FROM zamówienia"; // 8
+        private static string sprz = "SELECT * FROM sprzedaże"; // 10
+        private static string ofer = "SELECT * FROM oferta"; // 6
+        private static string klie = "SELECT * FROM klienci"; // 9
+
 
         static void Main(string[] args)
         {
-            // Build connection string using parameters from portal
-            //
-            string connString =
-                String.Format(
-                    "Server={0};Username={1};Database={2};Port={3};Password={4};SSLMode=Prefer",
-                    Host,
-                    User,
-                    DBname,
-                    Port,
-                    Password);
-
-            using (var conn = new NpgsqlConnection(connString))
-
+            string connString = null;
+            while (connString is null)
             {
-                Console.Out.WriteLine("Opening connection\n");
-                conn.Open();
-
-                string prac = "SELECT * FROM pracownicy";
-                string zwroty = "SELECT * FROM zwroty";
-                string zam = "SELECT * FROM zamówienia";
-                string sprz = "SELECT * FROM sprzedaże";
-                string ofer = "SELECT * FROM oferta";
-                string klie = "SELECT * FROM klienci";
-
-                /*Pracownicy*/
-                Console.Out.WriteLine("Pracownicy: \n");
-                var cmd = new NpgsqlCommand(prac, conn);
-                
-                NpgsqlDataReader rdr = cmd.ExecuteReader();
-                
-                Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7}", rdr.GetName(0), rdr.GetName(1),
-                rdr.GetName(2), rdr.GetName(3), rdr.GetName(4), rdr.GetName(5), rdr.GetName(6), rdr.GetName(7));
-                while (rdr.Read())
-                {
-                    Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7}", rdr.GetInt32(0), rdr.GetString(1),
-                    rdr.GetString(2), rdr.GetString(3), (rdr.IsDBNull(4)) ? "-" : rdr.GetString(4), rdr.GetString(5), (rdr.IsDBNull(6)) ? "-" :  rdr.GetString(6), rdr.GetString(7));
-                    //string tmp = "";
-                    //for (int i = 0; i < 8; i++)
-                    //{
-                    //    tmp = rdr.IsDBNull(i)) ?  "-" :  rdr.GetInt32(i);
-                    //}
-                }
-                rdr.Close();
-                Console.WriteLine("\n");
-
-                /*zwroty*/
-                Console.Out.WriteLine("Zwroty: \n");
-                cmd = new NpgsqlCommand(zwroty, conn);
-                rdr = cmd.ExecuteReader();
-                
-                Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9}", rdr.GetName(0), rdr.GetName(1),
-                rdr.GetName(2), rdr.GetName(3), rdr.GetName(4), rdr.GetName(5), rdr.GetName(6), rdr.GetName(7), rdr.GetName(8), rdr.GetName(9));
-                while (rdr.Read())
-                {
-                    Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9}", rdr.GetInt32(0), rdr.GetDate(1),
-                     rdr.GetInt32(2), rdr.GetBoolean(3), rdr.GetString(4), (rdr.IsDBNull(5)) ? "-" : rdr.GetString(5), (rdr.IsDBNull(6)) ? "-" : rdr.GetString(6), rdr.GetString(7), rdr.GetInt32(8), (rdr.IsDBNull(9)) ? "-" : rdr.GetString(9));
-                }
-                rdr.Close();
-
-                Console.WriteLine("\n");
-
-                /*zamówienia*/
-                Console.Out.WriteLine("Zamówienia: \n");
-                cmd = new NpgsqlCommand(zam, conn);
-                rdr = cmd.ExecuteReader();
-
-                Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} ", rdr.GetName(0), rdr.GetName(1),
-                     rdr.GetName(2), rdr.GetName(3), rdr.GetName(4), rdr.GetName(5), rdr.GetName(6), rdr.GetName(7));
-                while (rdr.Read())
-                {
-                    Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7}", rdr.GetInt32(0), rdr.GetInt32(1),
-                     rdr.GetString(2), (rdr.IsDBNull(3)) ? "-" : rdr.GetString(3), rdr.GetDate(4), rdr.GetDouble(5).ToString("N2"), rdr.GetInt32(6), rdr.GetString(7));
-                }
-                rdr.Close();
-                Console.WriteLine("\n");
-
-                /*Sprzedaże*/
-                Console.Out.WriteLine("Sprzedaże: \n");
-                cmd = new NpgsqlCommand(sprz, conn);
-                rdr = cmd.ExecuteReader();
-
-                Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9}", rdr.GetName(0), rdr.GetName(1),
-                    rdr.GetName(2), rdr.GetName(3), rdr.GetName(4), rdr.GetName(5), rdr.GetName(6), rdr.GetName(7), rdr.GetName(8), rdr.GetName(9));
-                while (rdr.Read())
-                {
-                    Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8} | {9} ", rdr.GetInt32(0), rdr.GetInt32(1),
-                     rdr.GetString(2), (rdr.IsDBNull(3)) ? "-" : rdr.GetString(3), rdr.GetDate(4), rdr.GetDouble(5).ToString("N2"), rdr.GetInt32(6), rdr.GetString(7), (rdr.IsDBNull(8)) ? "-" : rdr.GetString(8), (rdr.IsDBNull(9)) ? "-" : rdr.GetInt64(9));
-                }
-                rdr.Close();
-                Console.WriteLine("\n");
-
-                /*Oferta*/
-                Console.Out.WriteLine("Oferta: \n");
-                cmd = new NpgsqlCommand(ofer, conn);
-                rdr = cmd.ExecuteReader();
-
-                Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5}", rdr.GetName(0), rdr.GetName(1),
-                    rdr.GetName(2), rdr.GetName(3), rdr.GetName(4), rdr.GetName(5));
-                while (rdr.Read())
-                {
-                    Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5}", rdr.GetString(0), (rdr.IsDBNull(1)) ? "-" : rdr.GetString(1),
-                     (rdr.IsDBNull(2)) ? "-" : rdr.GetString(2), (rdr.IsDBNull(3)) ? "-" : rdr.GetString(3), rdr.GetString(4), rdr.GetInt32(5));
-                }
-                rdr.Close();
-                Console.WriteLine("\n");
-
-                /*Klienci*/
-                Console.Out.WriteLine("Klienci: \n");
-                cmd = new NpgsqlCommand(klie, conn);
-                rdr = cmd.ExecuteReader();
-
-                Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8}", rdr.GetName(0), rdr.GetName(1),
-                     rdr.GetName(2), rdr.GetName(3), rdr.GetName(4), rdr.GetName(5), rdr.GetName(6), rdr.GetName(7), rdr.GetName(8));
-                while (rdr.Read())
-                {
-                    Console.WriteLine("{0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} | {8}", rdr.GetInt32(0), (rdr.IsDBNull(1)) ? "-" : rdr.GetString(1),
-                     (rdr.IsDBNull(2)) ? "-" : rdr.GetString(2), (rdr.IsDBNull(3)) ? "-" : rdr.GetInt64(3), (rdr.IsDBNull(4)) ? "-" : rdr.GetString(4), (rdr.IsDBNull(5)) ? "-" : rdr.GetString(5)
-                     , (rdr.IsDBNull(6)) ? "-" : rdr.GetString(6), (rdr.IsDBNull(7)) ? "-" : rdr.GetString(7), (rdr.IsDBNull(8)) ? "-" : rdr.GetString(8));
-                }
-                rdr.Close();
-
+                connString = ConnectAs();
             }
-            Console.WriteLine("Press RETURN to exit");
-            Console.ReadLine();
+
+            while (true)
+            {
+                Console.WriteLine(" 1) Pokaż widok PRACOWNICY ");
+                Console.WriteLine(" 2) Pokaż widok ZWROTY ");
+                Console.WriteLine(" 3) Pokaż widok ZAMÓWIENIA ");
+                Console.WriteLine(" 4) Pokaż widok SPRZEDAŻE ");
+                Console.WriteLine(" 5) Pokaż widok OFERTA ");
+                Console.WriteLine(" 6) Pokaż widok KLIENCI ");
+                Console.WriteLine(" 0) Wyjście z programu ");
+                Console.WriteLine("Podaj akcję: ");
+                int choice = int.Parse(Console.ReadLine());
+
+                switch (choice)
+                {
+                    case 0:
+                        Console.WriteLine("Wybrano wyjście!");
+                        return;
+                    case 1:
+                        Console.WriteLine("PRACOWNICY");
+                        ReadView(prac, 8, connString);
+                        break;
+                    case 2:
+                        Console.WriteLine("ZWROTY");
+                        ReadView(zwroty, 10, connString);
+                        break;
+                    case 3:
+                        Console.WriteLine("ZAMÓWIENIA");
+                        ReadView(zam, 8, connString);
+                        break;
+                    case 4:
+                        Console.WriteLine("SPRZEDAŻE");
+                        ReadView(sprz, 10, connString);
+                        break;
+                    case 5:
+                        Console.WriteLine("OFERTA");
+                        ReadView(ofer, 6, connString);
+                        break;
+                    case 6:
+                        Console.WriteLine("KLIENCI");
+                        ReadView(klie, 9, connString);
+                        break;
+                    default:
+                        Console.WriteLine("Zła opcja!");
+                        break;
+                }
+
+                Console.WriteLine("Powrót do menu");
+                Console.ReadLine();
+            }
+            
+        }
+        static string ConnectAs()
+        {
+            Dictionary<string, string> usersAndPasswords = new Dictionary<string, string>();
+            usersAndPasswords.Add("pr_kierownik", "kierownik");
+            usersAndPasswords.Add("pr_sprzedawca1", "sprzedawca1");
+            usersAndPasswords.Add("pr_sprzedawca2", "sprzedawca2");
+            usersAndPasswords.Add("pr_magazynier1", "magazynier1");
+            usersAndPasswords.Add("pr_magazynier2", "magazynier2");
+
+            Console.WriteLine("Sklep komputerowy");
+            Console.WriteLine("Podaj nazwe użytkownika: ");
+            string user = Console.ReadLine();
+            Console.WriteLine("Podaj hasło: ");
+            string password = Console.ReadLine();
+            
+
+            if (usersAndPasswords.ContainsKey(user)) {
+                if (usersAndPasswords[user] == password)
+                {
+                    string connString =
+                       String.Format(
+                           "Server={0};Username={1};Database={2};Port={3};Password={4};SSLMode=Prefer",
+                           Host,
+                           user,
+                           DBname,
+                           Port,
+                           password);
+                    Console.WriteLine("Connection OK");
+                    return connString;
+                }
+                Console.WriteLine("Haslo niepoprawne");
+                return null;
+            }
+            Console.WriteLine("Login nieporpawny");
+            return null;
         }
 
+        static void ReadView(string myQuery, int numberOfColumns, string connString)
+        {
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                string columnLabels = "";
+
+                DataTable Table = new DataTable("MyView");
+                using(var cmd = new NpgsqlCommand(myQuery, conn))
+                {
+                    NpgsqlDataAdapter dap = new NpgsqlDataAdapter(cmd);
+                    conn.Open();
+                    try 
+                    {
+                        dap.Fill(Table); 
+                        var rdr = cmd.ExecuteReader();
+                        for (int i = 0; i < numberOfColumns; i++)
+                        {
+                            columnLabels += rdr.GetName(i) + " | ";
+                        }
+                    }
+                    catch (Npgsql.PostgresException e)
+                    {
+                        Console.WriteLine("Brak dostępu!, " + e.Message);
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
+                }
 
 
-
+                Console.WriteLine(Table.Rows.Count);
+                Console.WriteLine(columnLabels);
+                foreach (DataRow dataRow in Table.Rows)
+                {
+                    foreach (var item in dataRow.ItemArray)
+                    {
+                        Console.Write(item + " | ");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
     }
+
+   
 }
