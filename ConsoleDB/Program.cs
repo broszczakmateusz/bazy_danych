@@ -36,7 +36,7 @@ namespace ConsoleDB
                 Console.WriteLine(" 5) Pokaż widok OFERTA ");
                 Console.WriteLine(" 6) Pokaż widok KLIENCI ");
                 Console.WriteLine(" 0) Wyjście z programu ");
-                Console.WriteLine("Podaj akcję: ");
+                Console.WriteLine("Wybierz opcję: ");
                 int choice = int.Parse(Console.ReadLine());
 
                 switch (choice)
@@ -47,6 +47,14 @@ namespace ConsoleDB
                     case 1:
                         Console.WriteLine("PRACOWNICY");
                         ReadView(prac, 8, connString);
+
+                        Console.WriteLine(" Menu PRACOWNICY");
+                        Console.WriteLine(" 1) Dodaj pracownika");
+                        int subchoice = int.Parse(Console.ReadLine());
+                        if (subchoice == 1)
+                        {
+                            InsertPracownicy(connString);
+                        }
                         break;
                     case 2:
                         Console.WriteLine("ZWROTY");
@@ -76,7 +84,6 @@ namespace ConsoleDB
                 Console.WriteLine("Powrót do menu");
                 Console.ReadLine();
             }
-            
         }
         static string ConnectAs()
         {
@@ -92,9 +99,10 @@ namespace ConsoleDB
             string user = Console.ReadLine();
             Console.WriteLine("Podaj hasło: ");
             string password = Console.ReadLine();
-            
 
-            if (usersAndPasswords.ContainsKey(user)) {
+
+            if (usersAndPasswords.ContainsKey(user))
+            {
                 if (usersAndPasswords[user] == password)
                 {
                     string connString =
@@ -122,20 +130,20 @@ namespace ConsoleDB
                 string columnLabels = "";
 
                 DataTable Table = new DataTable("MyView");
-                using(var cmd = new NpgsqlCommand(myQuery, conn))
+                using (var cmd = new NpgsqlCommand(myQuery, conn))
                 {
                     NpgsqlDataAdapter dap = new NpgsqlDataAdapter(cmd);
                     conn.Open();
-                    try 
+                    try
                     {
-                        dap.Fill(Table); 
+                        dap.Fill(Table);
                         var rdr = cmd.ExecuteReader();
                         for (int i = 0; i < numberOfColumns; i++)
                         {
                             columnLabels += rdr.GetName(i) + " | ";
                         }
                     }
-                    catch (Npgsql.PostgresException e)
+                    catch (PostgresException e)
                     {
                         Console.WriteLine("Brak dostępu!, " + e.Message);
                     }
@@ -144,7 +152,6 @@ namespace ConsoleDB
                         conn.Close();
                     }
                 }
-
 
                 Console.WriteLine(Table.Rows.Count);
                 Console.WriteLine(columnLabels);
@@ -158,7 +165,79 @@ namespace ConsoleDB
                 }
             }
         }
-    }
+        static string QueryArguments(List<string> arguments)
+        {
+            
+            string queryArgs = "";
+            foreach (string argument in arguments)
+            {
+                queryArgs += "'" + argument + "',";
+            }
+            return queryArgs.TrimEnd(','); 
+        }
 
-   
+        static void InsertPracownicy(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Imię: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nazwisko: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Miejscowość: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Ulica: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr domu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr lokalu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Kod pocztowy: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Stanowisko: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                string myQuery = String.Format("call createPracownik({0});", QueryArguments(arguments));
+                using (var cmd = new NpgsqlCommand(myQuery, conn))
+                {
+                    conn.Open();
+                    try
+                    {
+                        var rdr = cmd.ExecuteReader();
+                        Console.WriteLine("Dodano wpis do bazy");
+                    }
+                    catch (PostgresException e)
+                    {
+                        Console.WriteLine("Próba wpisu nieudana!, " + e.Message);
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
+                }
+            }
+        }
+
+
+
+
+    }
 }
