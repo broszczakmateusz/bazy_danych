@@ -5,18 +5,18 @@ using Npgsql;
 
 namespace ConsoleDB
 {
-    internal class Program
+    public class Program
     {
         private static string Host = "localhost";
         private static string DBname = "sklep_komputerowy";
         private static string Port = "5432";
 
-        private static string prac = "SELECT * FROM pracownicy"; // 8
-        private static string zwroty = "SELECT * FROM zwroty"; // 10
-        private static string zam = "SELECT * FROM zamówienia"; // 8
-        private static string sprz = "SELECT * FROM sprzedaże"; // 10
-        private static string ofer = "SELECT * FROM oferta"; // 6
-        private static string klie = "SELECT * FROM klienci"; // 9
+        private static readonly string prac = "SELECT * FROM pracownicy"; // 8
+        private static readonly string zwroty = "SELECT * FROM zwroty"; // 10
+        private static readonly string zam = "SELECT * FROM zamówienia"; // 8
+        private static readonly string sprz = "SELECT * FROM sprzedaże"; // 10
+        private static readonly string ofer = "SELECT * FROM oferta"; // 6
+        private static readonly string klie = "SELECT * FROM klienci"; // 9
 
 
         static void Main(string[] args)
@@ -26,7 +26,11 @@ namespace ConsoleDB
             {
                 connString = ConnectAs();
             }
+            ShowMenu(connString);
+        }
 
+        public static void ShowMenu(string connString)
+        {
             while (true)
             {
                 Console.WriteLine(" 1) Pokaż widok PRACOWNICY ");
@@ -46,35 +50,164 @@ namespace ConsoleDB
                         return;
                     case 1:
                         Console.WriteLine("PRACOWNICY");
-                        ReadView(prac, 8, connString);
-
-                        Console.WriteLine(" Menu PRACOWNICY");
-                        Console.WriteLine(" 1) Dodaj pracownika");
-                        int subchoice = int.Parse(Console.ReadLine());
-                        if (subchoice == 1)
+                        if (ReadView(prac, 8, connString))
                         {
-                            InsertPracownicy(connString);
+                            Console.WriteLine(" Menu PRACOWNICY");
+                            Console.WriteLine(" 1) Dodaj pracownika");
+                            Console.WriteLine(" 2) Edytuj pracownika");
+                            Console.WriteLine(" 3) Usuń pracownika");
+                            Console.WriteLine(" 0) Powrót");
+                            int subchoice = int.Parse(Console.ReadLine());
+                            switch (subchoice)
+                            {
+                                case 0:
+                                    break;
+                                case 1:
+                                    InsertPracownicy(connString);
+                                    break;
+                                case 2:
+                                    UpdatePracownicy(connString);
+                                    break;
+                                case 3:
+                                    DeletePracownicy(connString);
+                                   break;
+                                default:
+                                    Console.WriteLine("Zła opcja!");
+                                    break;
+                            }
                         }
                         break;
                     case 2:
                         Console.WriteLine("ZWROTY");
-                        ReadView(zwroty, 10, connString);
+                        if (ReadView(zwroty, 10, connString))
+                        {
+                           Console.WriteLine(" Menu ZWROTY");
+                           Console.WriteLine(" 1) Dodaj zwrot");
+
+                            Console.WriteLine(" 0) Powrót");
+                            int subchoice = int.Parse(Console.ReadLine());
+                            switch (subchoice)
+                            {
+                                case 0:
+                                    break;
+                                case 1:
+                                    InsertZwroty(connString);
+                                    break;
+                                default:
+                                    Console.WriteLine("Zła opcja!");
+                                    break;
+                            }
+                        }
                         break;
                     case 3:
                         Console.WriteLine("ZAMÓWIENIA");
-                        ReadView(zam, 8, connString);
+                        if (ReadView(zam, 8, connString))
+                        {
+                            Console.WriteLine(" Menu ZAMÓWIENIA");
+                            Console.WriteLine(" 1) Dodaj zamówienie");
+                            Console.WriteLine(" 0) Powrót");
+                            int subchoice = int.Parse(Console.ReadLine());
+                            switch (subchoice)
+                            {
+                                case 0:
+                                    break;
+                                case 1:
+                                    InsertZamowienia(connString);
+                                    break;
+                                default:
+                                    Console.WriteLine("Zła opcja!");
+                                    break;
+                            }
+                        }
                         break;
                     case 4:
                         Console.WriteLine("SPRZEDAŻE");
-                        ReadView(sprz, 10, connString);
+                        if (ReadView(sprz, 10, connString))
+                        {
+                            Console.WriteLine(" Menu SPRZEDAŻE");
+                            Console.WriteLine(" 1) Dodaj sprzedaż");
+                            Console.WriteLine(" 0) Powrót");
+                            int subchoice = int.Parse(Console.ReadLine());
+                            switch (subchoice)
+                            {
+                                case 0:
+                                    break;
+                                case 1:
+                                    InsertSprzedaze(connString);
+                                    break;
+                                default:
+                                    Console.WriteLine("Zła opcja!");
+                                    break;
+                            }
+                        }
                         break;
                     case 5:
                         Console.WriteLine("OFERTA");
-                        ReadView(ofer, 6, connString);
+                        if (ReadView(ofer, 6, connString))
+                        {
+                            Console.WriteLine(" Menu OFERTA");
+                            Console.WriteLine(" 1) Dodaj do oferty");
+                            Console.WriteLine(" 2) Edytuj ofertę");
+                            Console.WriteLine(" 3) Usuń z oferty");
+                            Console.WriteLine(" 0) Powrót");
+                            int subchoice = int.Parse(Console.ReadLine());
+                            switch (subchoice)
+                            {
+                                case 0:
+                                    InsertOferta(connString);
+                                    break;
+                                case 1:
+
+                                    break;
+                                case 2:
+                                    UpdateOferta(connString);
+                                    break;
+                                case 3:
+                                    DeleteOferta(connString);
+                                    break;
+
+                                default:
+                                    Console.WriteLine("Zła opcja!");
+                                    break;
+                            }
+                        }
                         break;
                     case 6:
                         Console.WriteLine("KLIENCI");
-                        ReadView(klie, 9, connString);
+                        if (ReadView(klie, 9, connString))
+                        {
+                            Console.WriteLine(" Menu KLIENCI");
+                            Console.WriteLine(" 1) Dodaj klienta - firma");
+                            Console.WriteLine(" 2) Dodaj klienta - osoba");
+                            Console.WriteLine(" 3) Edytuj klienta - firma");
+                            Console.WriteLine(" 4) Edytuj klienta - osoba");
+                            Console.WriteLine(" 5) Usuń klienta");
+                            Console.WriteLine(" 0) Powrót");
+                            int subchoice = int.Parse(Console.ReadLine());
+                            switch (subchoice)
+                            {
+                                case 0:
+                                    break;
+                                case 1:
+                                    InsertKlienciFirma(connString);
+                                    break;
+                                case 2:
+                                    InsertKlienciOsoba(connString);
+                                    break;
+                                case 3:
+                                    UpdatelienciFirma(connString);
+                                    break;
+                                case 4:
+                                    UpdateKlienciOsoba(connString);
+                                    break;
+                                case 5:
+                                    DeleteKlienci(connString);
+                                    break;
+                                default:
+                                    Console.WriteLine("Zła opcja!");
+                                    break;
+                            }
+                        }
                         break;
                     default:
                         Console.WriteLine("Zła opcja!");
@@ -85,7 +218,8 @@ namespace ConsoleDB
                 Console.ReadLine();
             }
         }
-        static string ConnectAs()
+
+         public static string ConnectAs()
         {
             Dictionary<string, string> usersAndPasswords = new Dictionary<string, string>();
             usersAndPasswords.Add("pr_kierownik", "kierownik");
@@ -123,7 +257,7 @@ namespace ConsoleDB
             return null;
         }
 
-        static void ReadView(string myQuery, int numberOfColumns, string connString)
+        public static bool ReadView(string myQuery, int numberOfColumns, string connString)
         {
             using (var conn = new NpgsqlConnection(connString))
             {
@@ -142,15 +276,15 @@ namespace ConsoleDB
                         {
                             columnLabels += rdr.GetName(i) + " | ";
                         }
+                        conn.Close();
                     }
                     catch (PostgresException e)
                     {
                         Console.WriteLine("Brak dostępu!, " + e.Message);
-                    }
-                    finally
-                    {
                         conn.Close();
+                        return false;
                     }
+
                 }
 
                 Console.WriteLine(Table.Rows.Count);
@@ -163,9 +297,10 @@ namespace ConsoleDB
                     }
                     Console.WriteLine();
                 }
+                return true;
             }
         }
-        static string QueryArguments(List<string> arguments)
+        public static string QueryArguments(List<string> arguments)
         {
             
             string queryArgs = "";
@@ -174,6 +309,167 @@ namespace ConsoleDB
                 queryArgs += "'" + argument + "',";
             }
             return queryArgs.TrimEnd(','); 
+        }
+
+        //public static void InsertData(string connString, string[] aText, string procedure)
+        //{
+        //    string tmp = null;
+        //    List<string> arguments = new List<string>();
+
+        //    foreach (string argument in aText)
+        //    {
+        //        Console.WriteLine(argument + ": ");
+        //        tmp = Console.ReadLine();
+        //        arguments.Add(tmp);
+
+        //    }
+
+        //    using (var conn = new NpgsqlConnection(connString))
+        //    {
+        //        procedure  = procedure.TrimEnd(')',';');
+        //        string myQuery = String.Format("call {0}{1});", procedure, QueryArguments(arguments));
+
+        //        using (var cmd = new NpgsqlCommand(myQuery, conn))
+        //        {
+        //            conn.Open();
+        //            try
+        //            {
+        //                var rdr = cmd.ExecuteReader();
+        //                Console.WriteLine("Dodano wpis do bazy");
+        //            }
+        //            catch (PostgresException e)
+        //            {
+        //                Console.WriteLine("Próba wpisu nieudana!, " + e.Message);
+        //            }
+        //            finally
+        //            {
+        //                conn.Close();
+        //            }
+        //        }
+        //    }
+        //}
+
+        public static void InsertData(string connString, List<String> arguments, string procedure)
+        {
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                procedure = procedure.TrimEnd(')', ';');
+                string myQuery = String.Format("call {0}{1});", procedure, QueryArguments(arguments));
+
+                using (var cmd = new NpgsqlCommand(myQuery, conn))
+                {
+                    conn.Open();
+                    try
+                    {
+                        var rdr = cmd.ExecuteReader();
+                        Console.WriteLine("Dodano wpis do bazy");
+                    }
+                    catch (PostgresException e)
+                    {
+                        Console.WriteLine("Próba wpisu nieudana!, " + e.Message);
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
+                }
+            }
+        }
+
+        public static void UpdateData(string connString, List<String> arguments, string procedure)
+        {
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                procedure = procedure.TrimEnd(')', ';');
+                string myQuery = String.Format("call {0}{1});", procedure, QueryArguments(arguments));
+
+                using (var cmd = new NpgsqlCommand(myQuery, conn))
+                {
+                    conn.Open();
+                    try
+                    {
+                        var rdr = cmd.ExecuteReader();
+                        Console.WriteLine("Edytowano wpis w bazie");
+                    }
+                    catch (PostgresException e)
+                    {
+                        Console.WriteLine("Próba edycji nieudana!, " + e.Message);
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
+                }
+            }
+        }
+
+        public static void DeleteData(string connString, List<String> arguments, string procedure)
+        {
+            using (var conn = new NpgsqlConnection(connString))
+            {
+                procedure = procedure.TrimEnd(')', ';');
+                string myQuery = String.Format("call {0}{1});", procedure, QueryArguments(arguments));
+
+                using (var cmd = new NpgsqlCommand(myQuery, conn))
+                {
+                    conn.Open();
+                    try
+                    {
+                        var rdr = cmd.ExecuteReader();
+                        Console.WriteLine("Usunięyto pomyślnie");
+                    }
+                    catch (PostgresException e)
+                    {
+                        Console.WriteLine("Próba usunięcia nieudana!, " + e.Message);
+                    }
+                    finally
+                    {
+                        conn.Close();
+                    }
+                }
+            }
+        }
+
+        public static void DeletePracownicy(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Imię: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nazwisko: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "deletePracownik();";
+            DeleteData(connString, arguments, procedure);
+        }
+
+        public static void DeleteKlienci(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "deleteKlient();";
+            DeleteData(connString, arguments, procedure);
+        }
+        public static void DeleteOferta(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "deleteAsortyment();";
+            DeleteData(connString, arguments, procedure);
         }
 
         static void InsertPracownicy(string connString)
@@ -213,31 +509,314 @@ namespace ConsoleDB
             tmp = Console.ReadLine();
             arguments.Add(tmp);
 
-            using (var conn = new NpgsqlConnection(connString))
-            {
-                string myQuery = String.Format("call createPracownik({0});", QueryArguments(arguments));
-                using (var cmd = new NpgsqlCommand(myQuery, conn))
-                {
-                    conn.Open();
-                    try
-                    {
-                        var rdr = cmd.ExecuteReader();
-                        Console.WriteLine("Dodano wpis do bazy");
-                    }
-                    catch (PostgresException e)
-                    {
-                        Console.WriteLine("Próba wpisu nieudana!, " + e.Message);
-                    }
-                    finally
-                    {
-                        conn.Close();
-                    }
-                }
-            }
+            string procedure = "createPracownik();";
+            InsertData(connString, arguments, procedure);
+        }
+
+        static void InsertKlienciOsoba(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Imię: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nazwisko: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+                
+            string procedure = "createklientosoba();";
+            InsertData(connString, arguments, procedure);
+        }
+
+        static void InsertKlienciFirma(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Nazwa: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("NIP: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Miejscowość: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Ulica: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr domu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr lokalu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Kod pocztowy: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "createklientfirma();";
+            InsertData(connString, arguments, procedure);
+        }
+        static void InsertOferta(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Nazwa: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr egzemplarza: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Liczba sztuk: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "createasortyment();";
+            InsertData(connString, arguments, procedure);
+        }
+        static void InsertSprzedaze(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id asortyemntu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Id pracownika: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Cena: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Data sprzedaży: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Id klienta: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Id zwrotu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "createsprzedaż();";
+            InsertData(connString, arguments, procedure);
         }
 
 
+        static void InsertZamowienia(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
 
+            Console.WriteLine("Id asortyemntu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
 
+            Console.WriteLine("Id pracownika: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Cena: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Data zamównienia: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "createzamówienie();";
+            InsertData(connString, arguments, procedure);
+        }
+
+        static void InsertZwroty(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id sprzedaży: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Id pracownika: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Data zwrotu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Data nr komórkowy telefonu zwracającego: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Czy to zwrot gwarancyjny(true/false): ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "createzwrot();";
+            InsertData(connString, arguments, procedure);
+        }
+
+        static void UpdatePracownicy(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Imię: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nazwisko: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Miejscowość: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Ulica: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr domu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr lokalu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Kod pocztowy: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Stanowisko: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "updatePracownik();";
+            UpdateData(connString, arguments, procedure);
+        }
+        static void UpdateKlienciOsoba(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Imię: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nazwisko: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "updateklientosoba();";
+            UpdateData(connString, arguments, procedure);
+        }
+
+        static void UpdatelienciFirma(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nazwa: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("NIP: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Miejscowość: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Ulica: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr domu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr lokalu: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Kod pocztowy: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "updateklientfirma();";
+            UpdateData(connString, arguments, procedure);
+        }
+
+        static void UpdateOferta(string connString)
+        {
+            string tmp = null;
+            List<string> arguments = new List<string>();
+
+            Console.WriteLine("Id: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nazwa: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr seryjny: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Producent: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Nr egzemplarza: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Kategoria: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            Console.WriteLine("Liczba sztuk: ");
+            tmp = Console.ReadLine();
+            arguments.Add(tmp);
+
+            string procedure = "updateOferta();";
+            UpdateData(connString, arguments, procedure);
+        }
     }
+
 }
+
