@@ -154,10 +154,10 @@ namespace ConsoleDB
                             switch (subchoice)
                             {
                                 case 0:
-                                    InsertOferta(connString);
+                                    
                                     break;
                                 case 1:
-
+                                    InsertOferta(connString);
                                     break;
                                 case 2:
                                     UpdateOferta(connString);
@@ -355,7 +355,7 @@ namespace ConsoleDB
             {
                 procedure = procedure.TrimEnd(')', ';');
                 string myQuery = String.Format("call {0}{1});", procedure, QueryArguments(arguments));
-
+                Console.WriteLine(myQuery);
                 using (var cmd = new NpgsqlCommand(myQuery, conn))
                 {
                     conn.Open();
@@ -658,11 +658,11 @@ namespace ConsoleDB
             tmp = Console.ReadLine();
             arguments.Add(tmp);
 
-            Console.WriteLine("Data zwrotu: ");
+            Console.WriteLine("Nr komórkowy telefonu zwracającego: ");
             tmp = Console.ReadLine();
             arguments.Add(tmp);
 
-            Console.WriteLine("Data nr komórkowy telefonu zwracającego: ");
+            Console.WriteLine("Data zwrotu: ");
             tmp = Console.ReadLine();
             arguments.Add(tmp);
 
